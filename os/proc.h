@@ -49,9 +49,9 @@ struct proc {
 * LAB1: you may need to define struct for TaskInfo here
 */
 typedef struct {
-	TaskStatus status; 
-	unsigned int syscall_times[MAX_SYSCALL_NUM];
-	int time;
+	TaskStatus status; // 
+	unsigned int syscall_times[MAX_SYSCALL_NUM];  // holds counters 
+	int time; // stores runtime 
 } TaskInfo; 
 
 struct proc *curr_proc();

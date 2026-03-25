@@ -35,7 +35,8 @@ void proc_init(void)
 		/*
 		* LAB1: you may need to initialize your new fields of proc here
 		*/
-		for (int i = 0; i < MAX_SYSCALL_NUM; i++) {
+		// Refresh values upon new boot 
+		for (int i = 0; i < MAX_SYSCALL_NUM; i++) { // resets # of syscalls at boot
     		p->syscall_times[i] = 0;
 		}
 		p->start_time = 0;

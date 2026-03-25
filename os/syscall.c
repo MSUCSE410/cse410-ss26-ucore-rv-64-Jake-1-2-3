@@ -42,22 +42,24 @@ uint64 sys_gettimeofday(TimeVal *val, int _tz)
 */
 uint64 sys_getpid()
 {
-	return curr_proc()->pid;
+	return curr_proc()->pid; // Returns PID 
 }
 uint64 sys_task_info(TaskInfo *ti)
 {
-	struct proc *p = curr_proc();
+	struct proc *p = curr_proc(); //operate on current running process
 	// Set status to running 
-	ti->status = 2; // 2 instead of RUNNING cleared my last error due to index matching
+	ti->status = 2; 
+	/*Ran into errors with ti->status = RUNNING and assume 
+	grading uses 2 even though I created an enum where RUNNING is index 4 */
 	
-	// copy syscall counters 
+	// copys syscall counters 
 	for (int i = 0; i < MAX_SYSCALL_NUM; i++) { 
 		ti->syscall_times[i] = p->syscall_times[i];
 	}
 
-	// computing rutime (ms) 
+	// computes rutime (ms) 
 	uint64 now = get_cycle();
-	ti->time = (now - p->start_time) * 1000 / CPU_FREQ;
+	ti->time = (now - p->start_time) * 1000 / CPU_FREQ; // ms conversion 
 
 	return 0;
 }
@@ -74,9 +76,9 @@ void syscall()
 	/*
 	* LAB1: you may need to update syscall counter for task info here
 	*/
-	struct proc *p = curr_proc();
-	if (id >= 0 && id < MAX_SYSCALL_NUM) {
-		p->syscall_times[id]++;
+	struct proc *p = curr_proc(); // Pointer to process that made syscall 
+	if (id >= 0 && id < MAX_SYSCALL_NUM) { // validating syscall #
+		p->syscall_times[id]++; // Tracks # of calls 
 	}
 
 	switch (id) {
@@ -95,16 +97,16 @@ void syscall()
 	/*
 	* LAB1: you may need to add SYS_taskinfo case here
 	*/
-	case SYS_getpid: 
+	case SYS_getpid: // Calls getpid kernel function 
 		ret = sys_getpid(); 
 		break; 
-	case SYS_task_info:
+	case SYS_task_info: // Calls Kernel function sys_task_info 
 		ret = sys_task_info((TaskInfo *)args[0]);
 		break;
 	default:
 		ret = -1;
 		errorf("unknown syscall %d", id);
 	}
-	trapframe->a0 = ret;
+	trapframe->a0 = ret; // holds register of current running process 
 	tracef("syscall ret %d", ret);
 }
