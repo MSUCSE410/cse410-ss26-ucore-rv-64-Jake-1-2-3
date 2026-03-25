@@ -193,13 +193,13 @@ void syscall()
 	case SYS_getpid: // Calls getpid kernel function 
 		ret = sys_getpid(); 
 		break; 
-	case SYS_task_info: // Calls Kernel function sys_task_info 
+	case SYS_task_info: // Calls kernel function sys_task_info 
 		ret = sys_task_info((TaskInfo *)args[0]);
 		break;
-	case SYS_mmap: // Calls Kernel function sys_mmap
+	case SYS_mmap: // Calls kernel function sys_mmap
 		ret = sys_mmap(args[0], args[1], args[2], args[3], args[4]);
 		break;
-	case SYS_munmap: // Calls Kernel function sys_munmap
+	case SYS_munmap: // Calls kernel function sys_munmap
 		ret = sys_munmap(args[0], args[1]);
 		break;
 	default:
