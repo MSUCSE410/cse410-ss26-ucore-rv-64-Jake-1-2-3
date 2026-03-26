@@ -32,8 +32,8 @@ void proc_init(void)
 		p->kstack = (uint64)kstack[p - pool];
 		p->trapframe = (struct trapframe *)trapframe[p - pool];
 		// New lab 2 additions 
-		p->start_time = 0;
-		memset(p->syscall_times, 0, sizeof(p->syscall_times));
+		p->start_time = 0; // initializes process start time 
+		memset(p->syscall_times, 0, sizeof(p->syscall_times)); // sets all elements of syscall counter array to 0 
 	}
 	idle.kstack = (uint64)boot_stack_top;
 	idle.pid = 0;

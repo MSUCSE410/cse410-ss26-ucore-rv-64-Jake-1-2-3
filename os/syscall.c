@@ -5,7 +5,7 @@
 #include "timer.h"
 #include "trap.h"
 #include "proc.h"
-#include "vm.h" //added 
+#include "vm.h" //added provides all memory access helpers
 
 uint64 sys_write(int fd, uint64 va, uint len)
 {
@@ -36,6 +36,9 @@ uint64 sys_sched_yield()
  
 uint64 sys_gettimeofday(TimeVal *val, int _tz) // TODO: implement sys_gettimeofday in pagetable. (VA to PA)
 {
+	// Get Current process --> Translate VA -> PA
+	// --> Validate Pointer --> Use kernel-safe pointer 
+	// --> Write safely and not directly to user virtual mem
 	struct proc *p = curr_proc();
 	uint64 pa = useraddr(p->pagetable, (uint64)val);
 	if (pa == 0)
@@ -73,16 +76,17 @@ uint64 sys_mmap(uint64 start, uint64 len, int port, int flag, int fd)
 	// Round len up to page boundary
 	uint64 end = start + ((len + PAGE_SIZE - 1) / PAGE_SIZE) * PAGE_SIZE;
 
-	// Check that no page in [start, end) is already mapped
+	// Check that no page is already mapped
 	for (uint64 va = start; va < end; va += PAGE_SIZE) {
 		if (walkaddr(p->pagetable, va) != 0)
 			return -1;
 	}
+	// Permssion flags 
 	int perm = PTE_U | PTE_V;
 
-	if (port & 0x1) perm |= PTE_R;
-	if (port & 0x2) perm |= PTE_W;
-	if (port & 0x4) perm |= PTE_X;
+	if (port & 0x1) perm |= PTE_R; // Read 
+	if (port & 0x2) perm |= PTE_W; // Write 
+	if (port & 0x4) perm |= PTE_X; // Execute 
 
 	// map pages
 	for (uint64 va = start; va < end; va += PAGE_SIZE) {
